@@ -8,6 +8,10 @@ import java.util.List;
 
 public class InMemoryUserRepository implements UserRepository {
 
+    public List<User> getAllUsers() {
+        return allUsers;
+    }
+
     private List<User> allUsers;
 
     public InMemoryUserRepository() {
@@ -22,11 +26,21 @@ public class InMemoryUserRepository implements UserRepository {
 
         user1.addFriend(user2);
         user2.addFriend(user3);
+
+        //verwende unsere eigene add Methode
+        add(user1);
+        add(user2);
+        add(user3);
     }
 
     @Override
     public void add(User user) {
-        //uberprufe, dass der username unique bleibt
+        for (User u: this.allUsers){
+            if(u.getUsername().equals(user.getUsername())){
+                System.out.println("Username already exists");
+                return;
+            }
+        }
         this.allUsers.add(user);
 
     }
@@ -43,12 +57,31 @@ public class InMemoryUserRepository implements UserRepository {
     }
 
     @Override
-    public User findbyId(String s) {
+    public User findbyId(String username) {
+        for(User u: this.allUsers){
+            if(u.getUsername().equals(username)){
+                return u;
+            }
+        }
         return null;
     }
 
     @Override
     public List<User> getAllOnlinefriends() {
+        return null;
+    }
+
+    @Override
+    public User findByUsernameAndPassword(String username, String password) {
+        User user = findbyId(username);
+        if(user == null){
+            return null;
+        }
+        else{
+            if(user.getPassword().equals(password)){
+                return user;
+            }
+        }
         return null;
     }
 }
